@@ -19,27 +19,11 @@ jobs:
     environment: production
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2 
-      - name: Deploy in EC2
-        env:
-            OPEN_SSH_PRIVATE_KEY: ${{ secrets.OPEN_SSH_PRIVATE_KEY  }}
-            HOSTNAME : ${{ secrets.HOSTNAME  }}
-            USER_NAME : ${{ secrets.USER_NAME  }}
-            
-        run: |
-          apk add openssh-client &&
-          eval $(ssh-agent -s) &&
-          echo "$OPEN_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-          mkdir -p ~/.ssh
-          chmod 600 ~/.ssh
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install
+      - name: Unit tests
+        run: npm run test
 
-          ssh -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
-            #Now we have got the access of EC2 and we will start the deploy .
-            cd $PATH_REPO &&
-            git checkout main &&
-            git fetch --all &&
-            git reset --hard origin/main &&
-            git pull origin main &&
-            sudo npm install --force --production &&
-            sudo pm2 start ecosystem.config.js --env production
-          '
