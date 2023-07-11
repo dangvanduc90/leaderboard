@@ -18,15 +18,18 @@ jobs:
       - uses: actions/checkout@v2 
       - name: Deploy in EC2
         env:
-            PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
+            OPEN_SSH_PRIVATE_KEY: ${{ secrets.OPEN_SSH_PRIVATE_KEY  }}
             HOSTNAME : ${{ secrets.HOSTNAME  }}
             USER_NAME : ${{ secrets.USER_NAME  }}
+            
         run: |
-          echo "$PRIVATE_KEY" > private_key;
-          cat private_key;
-          chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-          
+          apk add openssh-client &&
+          eval $(ssh-agent -s) &&
+          echo "$OPEN_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+          mkdir -p ~/.ssh
+          chmod 600 ~/.ssh
+
+          ssh -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
             #Now we have got the access of EC2 and we will start the deploy .
             cd $PATH_REPO &&
             git checkout main &&
@@ -35,3 +38,4 @@ jobs:
             git pull origin main &&
             sudo npm install --force --production &&
             sudo pm2 start ecosystem.config.js --env production
+          '
