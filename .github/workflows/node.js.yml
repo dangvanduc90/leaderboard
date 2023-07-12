@@ -28,3 +28,4 @@ jobs:
             pwd
             cd ${PATH_REPO}
             pwd
+            git checkout ${{ github.head_ref || github.ref_name }}
