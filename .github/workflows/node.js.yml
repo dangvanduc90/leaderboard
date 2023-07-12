@@ -31,3 +31,4 @@ jobs:
             git pull origin ${{ github.head_ref || github.ref_name }} &&
             npm install --force --production &&
             pm2 start ecosystem.config.js --env production
+          '
