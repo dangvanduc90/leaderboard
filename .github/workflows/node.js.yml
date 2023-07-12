@@ -26,3 +26,8 @@ jobs:
             cd /data/repo/leaderboard
             ls -al
             git checkout ${{ github.head_ref || github.ref_name }}
+            git fetch --all
+            git reset --hard origin/${{ github.head_ref || github.ref_name }}
+            git pull origin ${{ github.head_ref || github.ref_name }}
+            npm install --force --production
+            pm2 start ecosystem.config.js --env production
