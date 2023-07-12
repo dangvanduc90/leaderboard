@@ -1,26 +1,33 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI
 
 on:
   push:
     branches: [ "main" ]
-  
+
 env:
-  PATH_REPO: /data/repo/leaderboard
+  PATH_REPO: "/data/repo/leaderboard"
 
 jobs:
   build:
     environment: production
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v3
-      - run: git pull origin ${{ github.head_ref || github.ref_name }}
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm install
-      - name: deploy
-        run: pm2 start ecosystem.config.js
-
+      - uses: actions/checkout@v2 
+      - name: Deploy in EC2
+        env:
+            PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+            HOSTNAME : ${{ secrets.HOSTNAME  }}
+            USER_NAME : ${{ secrets.USER_NAME  }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+          
+            #Now we have got the access of EC2 and we will start the deploy .
+            cd $PATH_REPO &&
+            git checkout ${{ github.head_ref || github.ref_name }} &&
+            git fetch --all &&
+            git reset --hard origin/${{ github.head_ref || github.ref_name }} &&
+            git pull origin ${{ github.head_ref || github.ref_name }} &&
+            npm install --force --production &&
+            pm2 start ecosystem.config.js --env production
