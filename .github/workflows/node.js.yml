@@ -24,7 +24,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           
             #Now we have got the access of EC2 and we will start the deploy .
-            cd $PATH_REPO &&
+            cd ${PATH_REPO} &&
             git checkout ${{ github.head_ref || github.ref_name }} &&
             git fetch --all &&
             git reset --hard origin/${{ github.head_ref || github.ref_name }} &&
