@@ -26,6 +26,6 @@ jobs:
             whoami
             ls -al
             pwd
-            cd ${PATH_REPO}
-            pwd
+            cd $PATH_REPO
+            ls -al
             git checkout ${{ github.head_ref || github.ref_name }}
