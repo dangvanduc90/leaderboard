@@ -22,16 +22,9 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-          
             #Now we have got the access of EC2 and we will start the deploy .
             cd ${PATH_REPO} &&
             pwd &&
             whoami &&
             cat ${PATH_REPO}
-            git checkout ${{ github.head_ref || github.ref_name }} &&
-            git fetch --all &&
-            git reset --hard origin/${{ github.head_ref || github.ref_name }} &&
-            git pull origin ${{ github.head_ref || github.ref_name }} &&
-            npm install --force --production &&
-            pm2 start ecosystem.config.js --env production
-          '
+           '
