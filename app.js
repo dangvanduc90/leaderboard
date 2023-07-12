@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var morgan = require('morgan');
 var rfs = require('rotating-file-stream') // version 2.x
+var livereload = require("livereload");
+var connectLiveReload = require("connect-livereload");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -22,6 +24,16 @@ var accessLogStream = rfs.createStream('access.log', {
 
 // setup the logger
 app.use(morgan('combined', { stream: accessLogStream }))
+
+// setup hrm
+const liveReloadServer = livereload.createServer();
+liveReloadServer.server.once("connection", () => {
+  setTimeout(() => {
+    liveReloadServer.refresh("/");
+  }, 100);
+});
+app.use(connectLiveReload());
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

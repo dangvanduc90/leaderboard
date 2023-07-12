@@ -4,16 +4,19 @@
   "private": true,
   "scripts": {
     "test": "DEBUG=myapp:* npm start",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "watch": "nodemon"
   },
   "dependencies": {
     "@binance/connector": "^3.0.0-rc.2",
+    "connect-livereload": "^0.6.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^16.3.1",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "livereload": "^0.9.3",
     "morgan": "~1.9.1",
     "request": "^2.88.2",
     "rotating-file-stream": "^3.1.0"
