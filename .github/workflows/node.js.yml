@@ -22,7 +22,7 @@ jobs:
           script: |
             whoami
             pwd
-            echo "$PATH_REPO"
-            cd $PATH_REPO
+            ls -al /data
+            cd /data/repo/leaderboard
             ls -al
             git checkout ${{ github.head_ref || github.ref_name }}
