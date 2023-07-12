@@ -19,12 +19,10 @@ jobs:
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: 22
+          debug: false
+          envs: PATH_REPO
           script: |
-            whoami
-            pwd
-            ls -al /data
-            cd /data/repo/leaderboard
-            ls -al
+            cd $PATH_REPO
             git checkout ${{ github.head_ref || github.ref_name }}
             git fetch --all
             git reset --hard origin/${{ github.head_ref || github.ref_name }}
